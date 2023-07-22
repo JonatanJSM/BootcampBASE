@@ -101,13 +101,6 @@ export const Clients = () => {
 					role="list"
 					className="my-4 overflow-auto divide-y divide-gray-100"
 				>
-					{/* {clients.map((client, index)=>{
-						return <Client client={client} key = {index}/>;
-						
-					})
-
-					} */}
-
 					{
 						clients.length === 0 ? (<div className="flex flex-col items-center justify-center h-full">
 							<p className="text-3xl font-bold text-center">
