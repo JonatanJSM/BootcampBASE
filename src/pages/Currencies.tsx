@@ -36,15 +36,16 @@ export const Currencies = () => {
     };
 
 	
-	const handleSearch = (SearchWord : string) => {
+	const handleSearchC = (SearchWord : string) => {
 		if(SearchWord === ""){
 			setcurrency(currenciesMock);
 		}else{
-			let newClientes = currenciesMock.filter((currenc)=>{
-				if(SearchWord === currenc.name)
+			let newCurrency = currenciesMock.filter((currenc)=>{
+				if(SearchWord === currenc.symbol){
 					return currenc;
-			})
-			setcurrency(newClientes);
+				}
+			});
+			setcurrency(newCurrency);
 		}
     };
 
@@ -62,7 +63,7 @@ export const Currencies = () => {
 					/>
 					<SearchInput
 						Icon={IconCoin}
-						onSearch={(e)=>handleSearch(e.target.value)}
+						onSearch={(e)=>handleSearchC(e.target.value)}
 						propertie="divisa"
 					/>
 				</div>
