@@ -3,27 +3,39 @@ import { Modal } from ".";
 import { httpClient } from "../http";
 import { ClientDTO } from "../interfaces";
 
+
 interface Props {
 	isOpen: boolean;
 	onClose: () => void;
+	mutateInfoClients: () => void;
 }
 
-export const CreateClientModal = ({ isOpen, onClose }: Props) => {
+export const CreateClientModal = ({ isOpen, onClose, mutateInfoClients}: Props) => {
 
 	const [info, setInfo] = useState({
 		name: "",
 		curp: "",
 		gender: "",
-		date: "",
 		birthdate: ""
 	});
 
 	const onSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 
-		const {data} = await httpClient.post<ClientDTO>("customers",{...info});
+		await httpClient.post<ClientDTO>("customers",{...info});
 
-		
+		onClose();
+
+
+		setInfo({
+			name: "",
+			curp: "",
+			gender: "",
+			birthdate: ""
+		});
+
+		mutateInfoClients();
+
 	}
 
 	return (

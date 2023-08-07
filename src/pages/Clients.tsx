@@ -66,6 +66,12 @@ export const Clients = () => {
 	// 	}
 	// };
 
+	const mutateInfoClients = () =>{
+		mutate(search,{
+			onSuccess: (data) => setClients(data)
+		})
+	}
+
 	return (
 		<>
 			<CreateClientModal
@@ -73,6 +79,7 @@ export const Clients = () => {
 				onClose={() => {
 					setIsOpen();
 				}}
+				mutateInfoClients={mutateInfoClients}
 			/>
 
 			<Header>
