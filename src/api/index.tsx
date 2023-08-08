@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { httpClient } from "../http";
-import { Client } from "../interfaces";
+import { Account, Client } from "../interfaces";
 
 
 export const useGetCustomer = () =>{
@@ -9,6 +9,31 @@ export const useGetCustomer = () =>{
         mutationFn: async(name: string) => {
             const {data} = await  httpClient.get<Client[]>("/customer",{
                 params: { name }
+            })
+
+            return data;
+        }
+    });
+}
+
+
+export const useGetCustomerById = () =>{
+    return useMutation({
+        mutationKey: ["Customers"],
+        mutationFn: async(id: string) => {
+            const {data} = await  httpClient.get<Client>("/customer/"+id,{
+            })
+
+            return data;
+        }
+    });
+}
+
+export const useGetAccountByIdCustomer = () =>{
+    return useMutation({
+        mutationKey: ["Accounts"],
+        mutationFn: async(id: string) => {
+            const {data} = await  httpClient.get<Account[]>("/Account/"+id,{
             })
 
             return data;
