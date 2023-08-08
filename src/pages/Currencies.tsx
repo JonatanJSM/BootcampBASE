@@ -3,7 +3,8 @@ import { DropdownOrderBy, Header, SearchInput } from "../components";
 import { useEffect, useState } from "react";
 import { Currency as ICurrency } from "../interfaces";
 import { Currency } from "../components/Currency";
-import { currenciesMock } from "../mocks";
+import { useGetDivisas } from "../api";
+import { FetchingData } from "../components/FetchingData";
 
 //TODO Renderizar arreglo de currencies
 //TODO Crear condicion en caso de que no haya datos
@@ -21,10 +22,15 @@ export const Currencies = () => {
         {label: "valor",value: "value",}
     ];
 
+	const [search, setSearch] = useState("");
+	const {isError, isLoading, mutate} = useGetDivisas()
+
 	useEffect(() => {
-        setcurrency(currenciesMock);
-        setcurrency((prevState) => orderCurrency(prevState, currenOrderOption));
-    }, []);
+		mutate(search,{
+			onSuccess: (data) => setcurrency(data)
+		});
+
+    }, [search]);
 
 	const orderCurrency = (clients: ICurrency[], currenOrderOption: string,): ICurrency[] => {
     	let key = currenOrderOption as keyof (typeof clients)[0];
@@ -42,18 +48,18 @@ export const Currencies = () => {
     };
 
 	
-	const handleSearchC = (SearchWord : string) => {
-		if(SearchWord === ""){
-			setcurrency(currenciesMock);
-		}else{
-			let newCurrency = currenciesMock.filter((currenc)=>{
-				if(SearchWord === currenc.symbol){
-					return currenc;
-				}
-			});
-			setcurrency(newCurrency);
-		}
-    };
+	// const handleSearchC = (SearchWord : string) => {
+	// 	if(SearchWord === ""){
+	// 		setcurrency(currenciesMock);
+	// 	}else{
+	// 		let newCurrency = currenciesMock.filter((currenc)=>{
+	// 			if(SearchWord === currenc.symbol){
+	// 				return currenc;
+	// 			}
+	// 		});
+	// 		setcurrency(newCurrency);
+	// 	}
+    // };
 
 	return (
 		<>
@@ -69,27 +75,26 @@ export const Currencies = () => {
 					/>
 					<SearchInput
 						Icon={IconCoin}
-						onSearch={(e)=>handleSearchC(e.target.value)}
+						onSearch={(e)=>setSearch(e.target.value)}
 						propertie="divisa"
 					/>
 				</div>
 			</Header>
 
 			<section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+				<FetchingData isLoading={isLoading} isError={isError}>
+					<ul role="list" 
+						className="grid w-full gap-3 overflow-auto divide-y divide-gray-100 sm:grid-cols-2 xl:grid-cols-4 my-7"
+					>
+						{currencies.map((currency) => (
+							<Currency currency={currency} key = {currency.symbol}/>
+						))}
+					</ul>
+				</FetchingData>
 				<ul
 					role="list"
 					className="grid w-full gap-3 overflow-auto divide-y divide-gray-100 sm:grid-cols-2 xl:grid-cols-4 my-7"
 				></ul>
-				{
-						currencies.length === 0 ? (<div className="flex flex-col items-center justify-center h-full">
-							<p className="text-3xl font-bold text-center">
-								¡Chin! :o
-							</p><p className="mt-5 text-lg text-center">
-								No hay divisas, nimodos
-							</p></div>):
-						currencies.map((currency)=>(
-						 <Currency currency={currency} key = {currency.symbol}/>
-					))}
 			</section>
 		</>
 	);

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { httpClient } from "../http";
-import { Account, Client } from "../interfaces";
+import { Account, Client, Currency } from "../interfaces";
 
 
 export const useGetCustomer = () =>{
@@ -36,6 +36,17 @@ export const useGetAccountByIdCustomer = () =>{
             const {data} = await  httpClient.get<Account[]>("/Account/"+id,{
             })
 
+            return data;
+        }
+    });
+}
+
+export const useGetDivisas = () =>{
+    return useMutation({
+        mutationKey: ["Currency"],
+        mutationFn: async(id: string) => {
+            const {data} = await  httpClient.get<Currency[]>("/currency",{
+            })
             return data;
         }
     });
