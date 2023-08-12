@@ -44,7 +44,7 @@ export const useGetAccountByIdCustomer = () =>{
 export const useGetDivisas = () =>{
     return useMutation({
         mutationKey: ["Currency"],
-        mutationFn: async(id: string) => {
+        mutationFn: async(_id: string) => {
             const {data} = await  httpClient.get<Currency[]>("/currency",{
             })
             return data;
