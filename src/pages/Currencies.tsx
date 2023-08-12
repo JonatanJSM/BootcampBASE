@@ -1,53 +1,57 @@
 import { IconCoin } from "@tabler/icons-react";
-import { DropdownOrderBy, Header, SearchInput } from "../components";
-import { useEffect, useState } from "react";
-import { Currency as ICurrency } from "../interfaces";
-import { Currency } from "../components/Currency";
+import { ChangeEvent, useEffect, useState } from "react";
+
 import { currenciesMock } from "../mocks";
+import { Currency as ICurrency } from "../interfaces";
+import { Currency, DropdownOrderBy, Header, SearchInput } from "../components";
 
 export const Currencies = () => {
-	const [currencies, setcurrency] = useState<ICurrency[]>([]);
-    const [currenOrderOption, setCurrenOrderOption] = useState("symbol");
+	const [currencies, setCurrencies] = useState<ICurrency[]>([]);
+	const [currentOrderOption, setCurrentOrderOption] = useState("");
 
-	const orderOptions : {label: string; value: string}[]=[
-        {label: "Nombre",value: "name",},
-        {label: "Simbolo", value: "symbol",},
-        {label: "valor",value: "value",}
-    ];
+	const orderOptions = [
+		{ label: "Nombre", value: "name" },
+		{ label: "Simbolo", value: "symbol" },
+		{ label: "Valor de cambio", value: "value" },
+	];
 
 	useEffect(() => {
-        setcurrency(currenciesMock);
-        setcurrency((prevState) => orderCurrency(prevState, currenOrderOption));
-    }, []);
+		setCurrencies(currenciesMock);
+	}, []);
 
-	const orderCurrency = (clients: ICurrency[], currenOrderOption: string,): ICurrency[] => {
-    	let key = currenOrderOption as keyof (typeof clients)[0];
-    	const newClients: ICurrency[] = clients.sort((a: ICurrency, b: ICurrency) => {
-            if (a[key] > b[key]) return 1;
-            if (a[key] < b[key]) return -1;
-            return 0;
-        });
-        return newClients;
-    };
+	const orderCurrencies = (
+		currencies: ICurrency[],
+		currentOrderOption: string,
+	): ICurrency[] => {
+		const key = currentOrderOption as keyof ICurrency;
+		const copyCurrencies = [...currencies];
 
-	const handleDropdown = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCurrenOrderOption(e.target.value);
-        setcurrency(orderCurrency(currencies, e.target.value));
-    };
+		const orderedCurrencies = copyCurrencies.sort((a, b) => {
+			if (a[key] > b[key]) return 1;
+			if (a[key] < b[key]) return -1;
+			return 0;
+		});
 
-	
-	const handleSearchC = (SearchWord : string) => {
-		if(SearchWord === ""){
-			setcurrency(currenciesMock);
-		}else{
-			let newCurrency = currenciesMock.filter((currenc)=>{
-				if(SearchWord === currenc.symbol){
-					return currenc;
-				}
+		return orderedCurrencies;
+	};
+
+	const handleDropdown = (e: ChangeEvent<HTMLSelectElement>) => {
+		setCurrentOrderOption(e.target.value);
+		setCurrencies(orderCurrencies(currencies, e.target.value));
+	};
+
+	const handleSearch = (query: string) => {
+		if (query === "") {
+			setCurrencies(currenciesMock);
+		} else {
+			const filteredCurrencies = currenciesMock.filter((currency) => {
+				if (currency.name.toLowerCase().includes(query.toLowerCase()))
+					return currency;
 			});
-			setcurrency(newCurrency);
+
+			setCurrencies(filteredCurrencies);
 		}
-    };
+	};
 
 	return (
 		<>
@@ -55,35 +59,45 @@ export const Currencies = () => {
 				<h1 className="text-3xl font-bold tracking-tight text-gray-900">
 					Divisas
 				</h1>
-				<div className="flex sm:w-96 w-full gap-2">
+				<div className="flex w-full gap-2 sm:w-96">
 					<DropdownOrderBy
 						onChange={handleDropdown}
 						options={orderOptions}
-						value={currenOrderOption}
+						value={currentOrderOption}
 					/>
 					<SearchInput
 						Icon={IconCoin}
-						onSearch={(e)=>handleSearchC(e.target.value)}
+						onSearch={(e) => handleSearch(e.target.value)}
 						propertie="divisa"
 					/>
 				</div>
 			</Header>
 
 			<section className="flex flex-col items-center h-[calc(100vh-10rem)] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-				<ul
-					role="list"
-					className="grid w-full gap-3 overflow-auto divide-y divide-gray-100 sm:grid-cols-2 xl:grid-cols-4 my-7"
-				></ul>
-				{
-						currencies.length === 0 ? (<div className="flex flex-col items-center justify-center h-full">
-							<p className="text-3xl font-bold text-center">
-								¡Chin! :o
-							</p><p className="mt-5 text-lg text-center">
-								No hay divisas, nimodos
-							</p></div>):
-						currencies.map((currency)=>(
-						 <Currency currency={currency} key = {currency.symbol}/>
-					))}
+				{currencies.length === 0 ? (
+					<div className="flex flex-col items-center justify-center h-full">
+						<p className="text-3xl font-bold text-center">
+							¡Oh no! :(
+						</p>
+
+						<p className="mt-5 text-lg text-center">
+							Algo no ha salido como esperabamos. Por favor,
+							intentalo más tarde.
+						</p>
+					</div>
+				) : (
+					<ul
+						role="list"
+						className="grid w-full gap-3 overflow-auto divide-y divide-gray-100 sm:grid-cols-2 xl:grid-cols-4 my-7"
+					>
+						{currencies.map((currency) => (
+							<Currency
+								currency={currency}
+								key={currency.symbol}
+							/>
+						))}
+					</ul>
+				)}
 			</section>
 		</>
 	);
