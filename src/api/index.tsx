@@ -7,7 +7,7 @@ export const useGetCustomer = () =>{
     return useMutation({
         mutationKey: ["Customers"],
         mutationFn: async(name: string) => {
-            const {data} = await  httpClient.get<Client[]>("/customer",{
+            const {data} = await  httpClient.get<Client[]>("/customers",{
                 params: { name }
             })
 
@@ -21,7 +21,7 @@ export const useGetCustomerById = () =>{
     return useMutation({
         mutationKey: ["Customers"],
         mutationFn: async(id: string) => {
-            const {data} = await  httpClient.get<Client>("/customer/"+id,{
+            const {data} = await  httpClient.get<Client>("/customers/"+id,{
             })
 
             return data;
